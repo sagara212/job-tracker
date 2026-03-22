@@ -1351,6 +1351,23 @@ function setupEventListeners() {
   document.getElementById('viewKanban').addEventListener('click', () => setViewMode('kanban'));
   document.getElementById('viewTimeline').addEventListener('click', () => setViewMode('timeline'));
 
+  // ── Hamburger menu toggle (mobile) ──
+  const hamburger = document.getElementById('navHamburger');
+  const navActions = document.getElementById('navActions');
+  hamburger.addEventListener('click', () => {
+    const isOpen = navActions.classList.toggle('nav-open');
+    hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    hamburger.querySelector('.hamburger-icon').textContent = isOpen ? '✕' : '☰';
+  });
+  // Close nav when clicking outside navbar on mobile
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.navbar') && navActions.classList.contains('nav-open')) {
+      navActions.classList.remove('nav-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.querySelector('.hamburger-icon').textContent = '☰';
+    }
+  });
+
   // ── Google Sheets Sync ──
   document.getElementById('openSheetsSettingsBtn').addEventListener('click', openSheetsSettingsModal);
   document.getElementById('closeSheetsBtn').addEventListener('click', () => hideModal('sheetsOverlay'));

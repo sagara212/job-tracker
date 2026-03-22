@@ -23,48 +23,59 @@
             <span class="navbar__title">Job<strong>Tracker</strong></span>
         </div>
 
-        <div class="navbar__actions">
+        <!-- Hamburger toggle (mobile only) -->
+        <button class="btn-icon navbar__hamburger" id="navHamburger" aria-label="Buka menu" aria-expanded="false">
+            <span class="hamburger-icon">☰</span>
+        </button>
+
+        <div class="navbar__actions" id="navActions">
             <!-- Search -->
-            <div class="search-box">
+            <div class="search-box navbar__search">
                 <span class="search-box__icon">🔍</span>
                 <input type="text" id="globalSearch" class="search-box__input" placeholder="Cari perusahaan / posisi…"
                     aria-label="Cari lamaran" />
             </div>
 
-            <!-- Notification bell -->
-            <button class="btn-icon" id="notifToggle" title="Aktifkan Reminder Interview"
-                aria-label="Toggle notifikasi">
-                <span id="notifIcon">🔔</span>
-            </button>
+            <!-- Icon buttons group -->
+            <div class="navbar__icon-group">
+                <!-- Notification bell -->
+                <button class="btn-icon" id="notifToggle" title="Aktifkan Reminder Interview"
+                    aria-label="Toggle notifikasi">
+                    <span id="notifIcon">🔔</span>
+                </button>
 
-            <!-- Dark-mode toggle -->
-            <button class="btn-icon" id="themeToggle" title="Toggle Dark Mode" aria-label="Toggle theme">
-                <span id="themeIcon">🌙</span>
-            </button>
+                <!-- Dark-mode toggle -->
+                <button class="btn-icon" id="themeToggle" title="Toggle Dark Mode" aria-label="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
+            </div>
 
-            <!-- Label Manager -->
-            <button class="btn btn--outline" id="openLabelsBtn" title="Kelola Label">
-                🏷️ Label
-            </button>
+            <!-- Action buttons group -->
+            <div class="navbar__btn-group">
+                <!-- Label Manager -->
+                <button class="btn btn--outline" id="openLabelsBtn" title="Kelola Label">
+                    🏷️ Label
+                </button>
 
-            <!-- Sync Google Sheets -->
-            <button class="btn btn--outline" id="openSheetsSettingsBtn" title="Sinkronisasi dengan Google Sheets">
-                ☁️ Sync Sheets
-            </button>
+                <!-- Sync Google Sheets -->
+                <button class="btn btn--outline" id="openSheetsSettingsBtn" title="Sinkronisasi dengan Google Sheets">
+                    ☁️ Sync Sheets
+                </button>
 
-            <!-- Import Excel (hidden file input) -->
-            <input type="file" id="importCsvInput" accept=".xlsx,.xls" style="display:none" />
-            <button class="btn btn--outline" id="importCsvBtn" title="Import dari Excel (.xlsx)">
-                ⬆ Import Excel
-            </button>
+                <!-- Import Excel (hidden file input) -->
+                <input type="file" id="importCsvInput" accept=".xlsx,.xls" style="display:none" />
+                <button class="btn btn--outline" id="importCsvBtn" title="Import dari Excel (.xlsx)">
+                    ⬆ Import
+                </button>
 
-            <!-- Export Excel -->
-            <button class="btn btn--outline" id="exportCsv" title="Export ke Excel (.xlsx)">
-                ⬇ Export Excel
-            </button>
+                <!-- Export Excel -->
+                <button class="btn btn--outline" id="exportCsv" title="Export ke Excel (.xlsx)">
+                    ⬇ Export
+                </button>
+            </div>
 
             <!-- Add new job -->
-            <button class="btn btn--primary" id="openModalBtn">
+            <button class="btn btn--primary navbar__add-btn" id="openModalBtn">
                 + Tambah
             </button>
         </div>
@@ -390,48 +401,48 @@
 
     <!-- ─────────── MODAL: Google Sheets Settings ─────────── -->
     <div class="modal-overlay hidden" id="sheetsOverlay" role="dialog" aria-modal="true" aria-labelledby="sheetsModalTitle">
-        <div class="modal modal--sm" style="max-width:480px">
+        <div class="modal modal--sheets">
             <div class="modal__header">
                 <h2 class="modal__title" id="sheetsModalTitle">☁️ Google Sheets Sync</h2>
                 <button class="btn-icon modal__close" id="closeSheetsBtn" aria-label="Tutup">✕</button>
             </div>
 
-            <div style="padding:0 8px 8px">
+            <div class="sheets-body">
                 <!-- URL Input -->
-                <div class="form-group" style="margin-bottom:16px">
+                <div class="form-group">
                     <label for="sheetsWebAppUrl" class="form-label">URL Web App (Google Apps Script)</label>
                     <input type="url" id="sheetsWebAppUrl" class="form-input"
                         placeholder="https://script.google.com/macros/s/.../exec" />
                     <span class="form-error" id="sheetsUrlErr"></span>
-                    <p style="font-size:11px;color:var(--text-muted);margin-top:6px">
+                    <p class="sheets-hint">
                         Paste URL dari deployment Google Apps Script kamu.<br>
                         Panduan: <strong>Extensions → Apps Script → Deploy → New deployment</strong>
                     </p>
                 </div>
 
                 <!-- Status indicator -->
-                <div id="sheetsStatusRow" style="display:none;align-items:center;gap:8px;margin-bottom:16px;padding:10px 12px;border-radius:8px;background:var(--surface-2);font-size:13px">
+                <div class="sheets-status" id="sheetsStatusRow">
                     <span id="sheetsStatusIcon">⏳</span>
                     <span id="sheetsStatusText">Menghubungkan…</span>
                 </div>
 
                 <!-- Action buttons -->
-                <div style="display:flex;flex-direction:column;gap:10px">
-                    <button class="btn btn--primary" id="sheetsPushBtn" style="width:100%">
+                <div class="sheets-actions">
+                    <button class="btn btn--primary sheets-btn" id="sheetsPushBtn">
                         &#x2B06; Push ke Google Sheets
-                        <small style="display:block;font-size:11px;font-weight:400;opacity:.8">Kirim semua data lokal → Google Sheets (overwrite)</small>
+                        <small class="sheets-btn__desc">Kirim semua data lokal → Google Sheets (overwrite)</small>
                     </button>
-                    <button class="btn btn--outline" id="sheetsPullBtn" style="width:100%">
+                    <button class="btn btn--outline sheets-btn" id="sheetsPullBtn">
                         &#x2B07; Pull dari Google Sheets
-                        <small style="display:block;font-size:11px;font-weight:400;opacity:.7">Ambil data dari Google Sheets → merge ke lokal</small>
+                        <small class="sheets-btn__desc">Ambil data dari Google Sheets → merge ke lokal</small>
                     </button>
-                    <button class="btn btn--ghost" id="sheetsSaveUrlBtn" style="width:100%">
+                    <button class="btn btn--ghost sheets-btn" id="sheetsSaveUrlBtn">
                         💾 Simpan URL
                     </button>
                 </div>
 
-                <hr class="detail-divider" style="margin:16px 0">
-                <p style="font-size:11px;color:var(--text-muted);line-height:1.6">
+                <hr class="detail-divider sheets-divider">
+                <p class="sheets-note">
                     <strong>Push</strong> akan <em>menimpa</em> semua data di Google Sheets.<br>
                     <strong>Pull</strong> akan <em>menambahkan / memperbarui</em> data lokal tanpa menghapus data yang sudah ada.
                 </p>

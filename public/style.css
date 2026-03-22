@@ -156,6 +156,28 @@ body {
   flex-wrap: nowrap;
 }
 
+.navbar__icon-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar__btn-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* Hamburger — hidden on desktop */
+.navbar__hamburger {
+  display: none;
+  margin-left: auto;
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
+}
+
 .search-box {
   display: flex;
   align-items: center;
@@ -1019,6 +1041,73 @@ body {
   max-width: 540px;
 }
 
+/* ── Google Sheets Modal ── */
+.modal--sheets {
+  max-width: 480px;
+}
+
+.sheets-body {
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sheets-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.6;
+}
+
+.sheets-status {
+  display: none;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  font-size: 13px;
+  border: 1px solid var(--border);
+}
+
+.sheets-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sheets-btn {
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
+  padding: 12px var(--space-md);
+  text-align: center;
+  gap: 4px;
+  white-space: normal;
+}
+
+.sheets-btn__desc {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  opacity: .75;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.sheets-divider {
+  margin: 0;
+}
+
+.sheets-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
 .modal__header {
   display: flex;
   align-items: center;
@@ -1378,25 +1467,74 @@ body {
 
 /* ── 21. RESPONSIVE ── */
 @media (max-width: 768px) {
+  /* Navbar mobile: brand + hamburger in row, actions collapse below */
   .navbar {
     padding: 0 var(--space-md);
     flex-wrap: wrap;
     height: auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    gap: var(--space-sm);
+    gap: 0;
+    align-items: center;
   }
 
-  .navbar__actions {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
+  .navbar__brand {
     flex: 1;
   }
 
+  /* Hamburger visible on mobile */
+  .navbar__hamburger {
+    display: inline-flex;
+  }
+
+  /* Actions panel hidden by default on mobile */
+  .navbar__actions {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border);
+    margin-top: var(--space-sm);
+  }
+
+  /* When open (toggled by JS) */
+  .navbar__actions.nav-open {
+    display: flex;
+  }
+
+  .navbar__search {
+    width: 100%;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
   .search-box__input {
+    width: 100%;
+  }
+
+  /* Icon group (notif + theme): aligned right */
+  .navbar__icon-group {
+    justify-content: flex-end;
+  }
+
+  /* Button group: full width, 2 per row */
+  .navbar__btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xs);
+    width: 100%;
+  }
+
+  .navbar__btn-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .navbar__add-btn {
     width: 100%;
   }
 
