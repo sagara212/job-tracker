@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Tracker – Lacak Lamaranmu</title>
+    <meta name="description"
+        content="Aplikasi personal untuk melacak dan mengelola lamaran pekerjaan secara terstruktur." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body data-theme="dark">
+
+    <!-- ─────────── NAVBAR ─────────── -->
+    <header class="navbar" id="navbar">
+        <div class="navbar__brand">
+            <span class="navbar__icon">💼</span>
+            <span class="navbar__title">Job<strong>Tracker</strong></span>
+        </div>
+
+        <div class="navbar__actions">
+            <!-- Search -->
+            <div class="search-box">
+                <span class="search-box__icon">🔍</span>
+                <input type="text" id="globalSearch" class="search-box__input" placeholder="Cari perusahaan / posisi…"
+                    aria-label="Cari lamaran" />
+            </div>
+
+            <!-- Notification bell -->
+            <button class="btn-icon" id="notifToggle" title="Aktifkan Reminder Interview"
+                aria-label="Toggle notifikasi">
+                <span id="notifIcon">🔔</span>
+            </button>
+
+            <!-- Dark-mode toggle -->
+            <button class="btn-icon" id="themeToggle" title="Toggle Dark Mode" aria-label="Toggle theme">
+                <span id="themeIcon">🌙</span>
+            </button>
+
+            <!-- Label Manager -->
+            <button class="btn btn--outline" id="openLabelsBtn" title="Kelola Label">
+                🏷️ Label
+            </button>
+
+            <!-- Sync Google Sheets -->
+            <button class="btn btn--outline" id="openSheetsSettingsBtn" title="Sinkronisasi dengan Google Sheets">
+                ☁️ Sync Sheets
+            </button>
+
+            <!-- Import Excel (hidden file input) -->
+            <input type="file" id="importCsvInput" accept=".xlsx,.xls" style="display:none" />
+            <button class="btn btn--outline" id="importCsvBtn" title="Import dari Excel (.xlsx)">
+                ⬆ Import Excel
+            </button>
+
+            <!-- Export Excel -->
+            <button class="btn btn--outline" id="exportCsv" title="Export ke Excel (.xlsx)">
+                ⬇ Export Excel
+            </button>
+
+            <!-- Add new job -->
+            <button class="btn btn--primary" id="openModalBtn">
+                + Tambah
+            </button>
+        </div>
+    </header>
+
+    <!-- ─────────── DASHBOARD STATS ─────────── -->
+    <section class="dashboard" aria-label="Statistik Lamaran">
+        <div class="stat-card">
+            <span class="stat-card__icon">📋</span>
+            <div class="stat-card__body">
+                <p class="stat-card__label">Total Lamaran</p>
+                <h2 class="stat-card__value" id="valTotal">0</h2>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-card__icon">🎤</span>
+            <div class="stat-card__body">
+                <p class="stat-card__label">Interview</p>
+                <h2 class="stat-card__value" id="valInterview">0</h2>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-card__icon">✅</span>
+            <div class="stat-card__body">
+                <p class="stat-card__label">Diterima</p>
+                <h2 class="stat-card__value" id="valAccepted">0</h2>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-card__icon">❌</span>
+            <div class="stat-card__body">
+                <p class="stat-card__label">Ditolak</p>
+                <h2 class="stat-card__value" id="valRejected">0</h2>
+            </div>
+        </div>
+        <div class="stat-card stat-card--progress">
+            <span class="stat-card__icon">📈</span>
+            <div class="stat-card__body">
+                <p class="stat-card__label">Success Rate</p>
+                <h2 class="stat-card__value" id="valRate">0%</h2>
+                <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar__fill" id="progressFill" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─────────── FILTER & SORT BAR ─────────── -->
+    <section class="toolbar" aria-label="Filter dan Sort">
+        <div class="toolbar__filters">
+            <label for="filterStatus" class="sr-only">Filter Status</label>
+            <select id="filterStatus" class="select">
+                <option value="">Semua Status</option>
+                <option value="Applied">Applied</option>
+                <option value="No Response">No Response</option>
+                <option value="Interview">Interview</option>
+                <option value="Ditolak">Ditolak</option>
+                <option value="Alhamdulillah">Alhamdulillah ✅</option>
+            </select>
+
+            <label for="filterPriority" class="sr-only">Filter Priority</label>
+            <select id="filterPriority" class="select">
+                <option value="">Semua Priority</option>
+                <option value="High">🔴 High</option>
+                <option value="Medium">🟡 Medium</option>
+                <option value="Low">🟢 Low</option>
+            </select>
+
+            <label for="filterType" class="sr-only">Filter Tipe</label>
+            <select id="filterType" class="select">
+                <option value="">Semua Tipe</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+            </select>
+        </div>
+
+        <div class="toolbar__sort">
+            <label for="sortBy" class="sr-only">Sort</label>
+            <select id="sortBy" class="select">
+                <option value="date-desc">Terbaru</option>
+                <option value="date-asc">Terlama</option>
+                <option value="priority-desc">Priority Tinggi</option>
+                <option value="priority-asc">Priority Rendah</option>
+                <option value="company-asc">A–Z Perusahaan</option>
+            </select>
+
+            <!-- View toggle: card / table / kanban / timeline -->
+            <div class="view-toggle" role="group" aria-label="Pilih tampilan">
+                <button class="btn-icon view-toggle__btn active" id="viewCard" title="Card view"
+                    aria-pressed="true">⊞</button>
+                <button class="btn-icon view-toggle__btn" id="viewTable" title="Table view"
+                    aria-pressed="false">☰</button>
+                <button class="btn-icon view-toggle__btn" id="viewKanban" title="Kanban view"
+                    aria-pressed="false">⬚</button>
+                <button class="btn-icon view-toggle__btn" id="viewTimeline" title="Timeline view"
+                    aria-pressed="false">≡</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─────────── MAIN CONTENT ─────────── -->
+    <main class="main-content" id="mainContent">
+        <!-- Loading skeleton -->
+        <div class="loading-state" id="loadingState" aria-live="polite">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state hidden" id="emptyState">
+            <div class="empty-state__illustration">🗂️</div>
+            <h3 class="empty-state__title">Belum ada lamaran</h3>
+            <p class="empty-state__desc">Tambahkan lamaran pertamamu dan mulai pantau prosesnya!</p>
+            <button class="btn btn--primary" id="emptyAddBtn">+ Tambah Lamaran</button>
+        </div>
+
+        <!-- Card grid view -->
+        <div class="card-grid hidden" id="cardGrid"></div>
+
+        <!-- Table view -->
+        <div class="table-wrapper hidden" id="tableWrapper">
+            <table class="job-table" id="jobTable">
+                <thead>
+                    <tr>
+                        <th>Perusahaan</th>
+                        <th>Posisi</th>
+                        <th>Tipe</th>
+                        <th>Tanggal Apply</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="jobTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Kanban Board view -->
+        <div class="kanban-board hidden" id="kanbanBoard"></div>
+
+        <!-- Timeline view -->
+        <div class="timeline-view hidden" id="timelineView"></div>
+    </main>
+
+    <!-- ─────────── MODAL: Tambah / Edit ─────────── -->
+    <div class="modal-overlay hidden" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <div class="modal__header">
+                <h2 class="modal__title" id="modalTitle">Tambah Lamaran</h2>
+                <button class="btn-icon modal__close" id="closeModalBtn" aria-label="Tutup modal">✕</button>
+            </div>
+
+            <form class="modal__form" id="jobForm" novalidate>
+                <input type="hidden" id="jobId" />
+
+                <!-- Row 1 -->
+                <div class="form-grid">
+                    <div class="form-group form-group--full">
+                        <label for="company" class="form-label">Nama Perusahaan <span class="required">*</span></label>
+                        <input type="text" id="company" class="form-input" placeholder="Contoh: PT Maju Bersama"
+                            required />
+                        <span class="form-error" id="companyErr"></span>
+                    </div>
+                    <div class="form-group form-group--full">
+                        <label for="position" class="form-label">Posisi <span class="required">*</span></label>
+                        <input type="text" id="position" class="form-input" placeholder="Contoh: Frontend Developer"
+                            required />
+                        <span class="form-error" id="positionErr"></span>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="form-grid form-grid--2">
+                    <div class="form-group">
+                        <label for="employmentType" class="form-label">Employment Type</label>
+                        <select id="employmentType" class="form-input">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Internship">Internship</option>
+                            <option value="Contract">Contract</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="location" class="form-label">Lokasi</label>
+                        <input type="text" id="location" class="form-input" placeholder="Contoh: Jakarta / Remote" />
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="form-grid form-grid--2">
+                    <div class="form-group">
+                        <label for="applyDate" class="form-label">Tanggal Apply <span class="required">*</span></label>
+                        <input type="date" id="applyDate" class="form-input" required />
+                        <span class="form-error" id="applyDateErr"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="interviewDate" class="form-label">Tanggal Interview</label>
+                        <input type="date" id="interviewDate" class="form-input" />
+                    </div>
+                </div>
+
+                <!-- Row 4 -->
+                <div class="form-grid form-grid--2">
+                    <div class="form-group">
+                        <label for="salary" class="form-label">Estimasi Gaji</label>
+                        <input type="text" id="salary" class="form-input" placeholder="Contoh: 8–12 juta" />
+                    </div>
+                    <div class="form-group">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select id="priority" class="form-input">
+                            <option value="High">🔴 High</option>
+                            <option value="Medium" selected>🟡 Medium</option>
+                            <option value="Low">🟢 Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 5 -->
+                <div class="form-grid form-grid--2">
+                    <div class="form-group">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" class="form-input">
+                            <option value="Applied" selected>Applied</option>
+                            <option value="No Response">No Response</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Ditolak">Ditolak</option>
+                            <option value="Alhamdulillah">Alhamdulillah ✅</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="applyLink" class="form-label">Link Pendaftaran</label>
+                        <input type="url" id="applyLink" class="form-input"
+                            placeholder="https://jobs.example.com/..." />
+                    </div>
+                </div>
+
+                <!-- Label Picker -->
+                <div class="form-group">
+                    <label class="form-label">Label / Tag</label>
+                    <div class="label-picker" id="labelPicker">
+                        <span class="label-picker__empty">Belum ada label. Buat di menu 🏷️ Label.</span>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="form-group">
+                    <label for="requirements" class="form-label">Requirements</label>
+                    <textarea id="requirements" class="form-input form-textarea"
+                        placeholder="Contoh: Min. 2 tahun pengalaman React, komunikasi dalam bahasa Inggris…"></textarea>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-group">
+                    <label for="notes" class="form-label">Catatan Tambahan</label>
+                    <textarea id="notes" class="form-input form-textarea"
+                        placeholder="Referral dari siapa? Kesan wawancara? Dll…"></textarea>
+                </div>
+
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--ghost" id="cancelModalBtn">Batal</button>
+                    <button type="submit" class="btn btn--primary" id="submitBtn">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─────────── MODAL: Detail View ─────────── -->
+    <div class="modal-overlay hidden" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <div class="modal modal--detail">
+            <div class="modal__header">
+                <h2 class="modal__title" id="detailTitle">Detail Lamaran</h2>
+                <button class="btn-icon modal__close" id="closeDetailBtn" aria-label="Tutup detail">✕</button>
+            </div>
+            <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+
+    <!-- ─────────── MODAL: Label Manager ─────────── -->
+    <div class="modal-overlay hidden" id="labelManagerOverlay" role="dialog" aria-modal="true"
+        aria-labelledby="labelManagerTitle">
+        <div class="modal modal--sm">
+            <div class="modal__header">
+                <h2 class="modal__title" id="labelManagerTitle">🏷️ Kelola Label</h2>
+                <button class="btn-icon modal__close" id="closeLabelManagerBtn"
+                    aria-label="Tutup label manager">✕</button>
+            </div>
+            <div class="label-manager" id="labelManager">
+                <!-- Form tambah label -->
+                <div class="label-add-form">
+                    <input type="text" id="labelNameInput" class="form-input" placeholder="Nama label…"
+                        maxlength="20" />
+                    <input type="color" id="labelColorInput" class="color-picker" value="#6C63FF" title="Pilih warna" />
+                    <button class="btn btn--primary" id="addLabelBtn">+ Tambah</button>
+                </div>
+                <p class="form-error" id="labelNameErr"></p>
+                <!-- Daftar label -->
+                <div class="label-list" id="labelList">
+                    <p class="label-list__empty" id="labelListEmpty">Belum ada label.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─────────── CONFIRM DELETE DIALOG ─────────── -->
+    <div class="modal-overlay hidden" id="confirmOverlay" role="dialog" aria-modal="true"
+        aria-labelledby="confirmTitle">
+        <div class="modal modal--sm">
+            <div class="modal__header">
+                <h2 class="modal__title" id="confirmTitle">Hapus Lamaran?</h2>
+            </div>
+            <p class="confirm-msg">Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="modal__footer">
+                <button class="btn btn--ghost" id="cancelDeleteBtn">Batal</button>
+                <button class="btn btn--danger" id="confirmDeleteBtn">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─────────── MODAL: Google Sheets Settings ─────────── -->
+    <div class="modal-overlay hidden" id="sheetsOverlay" role="dialog" aria-modal="true" aria-labelledby="sheetsModalTitle">
+        <div class="modal modal--sm" style="max-width:480px">
+            <div class="modal__header">
+                <h2 class="modal__title" id="sheetsModalTitle">☁️ Google Sheets Sync</h2>
+                <button class="btn-icon modal__close" id="closeSheetsBtn" aria-label="Tutup">✕</button>
+            </div>
+
+            <div style="padding:0 8px 8px">
+                <!-- URL Input -->
+                <div class="form-group" style="margin-bottom:16px">
+                    <label for="sheetsWebAppUrl" class="form-label">URL Web App (Google Apps Script)</label>
+                    <input type="url" id="sheetsWebAppUrl" class="form-input"
+                        placeholder="https://script.google.com/macros/s/.../exec" />
+                    <span class="form-error" id="sheetsUrlErr"></span>
+                    <p style="font-size:11px;color:var(--text-muted);margin-top:6px">
+                        Paste URL dari deployment Google Apps Script kamu.<br>
+                        Panduan: <strong>Extensions → Apps Script → Deploy → New deployment</strong>
+                    </p>
+                </div>
+
+                <!-- Status indicator -->
+                <div id="sheetsStatusRow" style="display:none;align-items:center;gap:8px;margin-bottom:16px;padding:10px 12px;border-radius:8px;background:var(--surface-2);font-size:13px">
+                    <span id="sheetsStatusIcon">⏳</span>
+                    <span id="sheetsStatusText">Menghubungkan…</span>
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <button class="btn btn--primary" id="sheetsPushBtn" style="width:100%">
+                        &#x2B06; Push ke Google Sheets
+                        <small style="display:block;font-size:11px;font-weight:400;opacity:.8">Kirim semua data lokal → Google Sheets (overwrite)</small>
+                    </button>
+                    <button class="btn btn--outline" id="sheetsPullBtn" style="width:100%">
+                        &#x2B07; Pull dari Google Sheets
+                        <small style="display:block;font-size:11px;font-weight:400;opacity:.7">Ambil data dari Google Sheets → merge ke lokal</small>
+                    </button>
+                    <button class="btn btn--ghost" id="sheetsSaveUrlBtn" style="width:100%">
+                        💾 Simpan URL
+                    </button>
+                </div>
+
+                <hr class="detail-divider" style="margin:16px 0">
+                <p style="font-size:11px;color:var(--text-muted);line-height:1.6">
+                    <strong>Push</strong> akan <em>menimpa</em> semua data di Google Sheets.<br>
+                    <strong>Pull</strong> akan <em>menambahkan / memperbarui</em> data lokal tanpa menghapus data yang sudah ada.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─────────── TOAST NOTIFICATION ─────────── -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- SheetJS for Excel export/import -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
