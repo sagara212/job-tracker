@@ -1615,3 +1615,441 @@ body {
 .text-muted {
   color: var(--text-muted)
 }
+
+/* ── 23. FORM GRID 3-COLUMN ── */
+.form-grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ── 24. TUTOR BUTTON (Navbar) ── */
+.btn--tutor {
+  background: linear-gradient(135deg, #6C63FF 0%, #a78bfa 100%);
+  color: #fff;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--tutor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background var(--trans-fast);
+}
+
+.btn--tutor:hover::before {
+  background: rgba(255,255,255,.12);
+}
+
+.btn--tutor:hover {
+  box-shadow: 0 4px 18px rgba(108, 99, 255, .45);
+}
+
+/* ── 25. APP FOOTER ── */
+.app-footer {
+  text-align: center;
+  padding: var(--space-lg) var(--space-lg);
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: var(--space-xl);
+}
+
+.app-footer strong {
+  color: var(--accent);
+}
+
+.app-footer__sub {
+  font-size: 11px;
+  opacity: .65;
+}
+
+/* ── 26. TUTOR MODAL ── */
+.modal--tutor {
+  max-width: 680px;
+}
+
+/* Tab bar */
+.tutor-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  position: sticky;
+  top: 68px;
+  z-index: 2;
+}
+
+.tutor-tab {
+  flex: 1;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--trans-fast), border-color var(--trans-fast), background var(--trans-fast);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.tutor-tab:hover {
+  color: var(--text-sec);
+  background: var(--accent-light);
+}
+
+.tutor-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Tutor description text */
+.tutor-desc {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.7;
+}
+
+/* Status list (Cara Pakai step 3) */
+.tutor-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tutor-status-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-sec);
+}
+
+.tutor-status-item .badge {
+  min-width: 130px;
+  justify-content: center;
+}
+
+/* View grid (Cara Pakai step 4) */
+.tutor-view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.tutor-view-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+}
+
+.tutor-view-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.tutor-view-item strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text-pri);
+  margin-bottom: 2px;
+}
+
+.tutor-view-item p {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.tutor-body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.tutor-intro {
+  font-size: 14px;
+  color: var(--text-sec);
+  background: var(--accent-light);
+  border-left: 3px solid var(--accent);
+  padding: 10px 14px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  line-height: 1.6;
+}
+
+/* Step layout */
+.tutor-step {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.tutor-step__num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.tutor-step__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.tutor-step__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-pri);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.tutor-badge {
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+/* Lists */
+.tutor-list {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.8;
+  padding-left: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tutor-list li {
+  list-style: disc;
+}
+
+.tutor-list--ordered li {
+  list-style: decimal;
+}
+
+.tutor-list strong {
+  color: var(--text-pri);
+}
+
+.tutor-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tutor-link:hover {
+  text-decoration: underline;
+}
+
+/* Code block */
+.tutor-code-wrapper {
+  position: relative;
+  margin-top: var(--space-sm);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.tutor-code {
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  padding: 40px 16px 16px;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.tutor-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #c9d1d9;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--trans-fast), color var(--trans-fast);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.tutor-copy-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.tutor-copy-btn.copied {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+/* Tips (Step 5) */
+.tutor-tips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.tutor-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.tutor-tip--push {
+  border-color: rgba(108, 99, 255, .3);
+}
+
+.tutor-tip--pull {
+  border-color: rgba(46, 204, 113, .3);
+}
+
+.tutor-tip__icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tutor-tip strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text-pri);
+  margin-bottom: 4px;
+}
+
+.tutor-tip p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.tutor-note {
+  margin-top: var(--space-md);
+  padding: 10px 14px;
+  background: rgba(46, 204, 113, .1);
+  border-left: 3px solid var(--success);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px;
+  color: var(--success);
+  font-weight: 600;
+}
+
+/* Inline code */
+.tutor-step__content code {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 12px;
+  font-family: 'Consolas', monospace;
+  color: var(--accent);
+}
+
+/* ── 27. RESPONSIVE ADDITIONS ── */
+@media (max-width: 768px) {
+  .form-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .tutor-tips {
+    grid-template-columns: 1fr;
+  }
+
+  .modal--tutor {
+    max-width: 100%;
+  }
+
+  .tutor-body {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .tutor-step {
+    gap: var(--space-sm);
+  }
+
+  .tutor-view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tutor-status-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .tutor-status-item .badge {
+    min-width: auto;
+  }
+
+  .tutor-tab {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+
+  .app-footer {
+    padding: var(--space-md);
+    margin-top: var(--space-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .tutor-code {
+    font-size: 11px;
+    max-height: 220px;
+  }
+
+  .tutor-step__num {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+}

@@ -52,6 +52,11 @@
 
             <!-- Action buttons group -->
             <div class="navbar__btn-group">
+                <!-- Tutor -->
+                <button class="btn btn--tutor" id="openTutorBtn" title="Panduan Integrasi Google Sheets">
+                    📖 Tutor
+                </button>
+
                 <!-- Label Manager -->
                 <button class="btn btn--outline" id="openLabelsBtn" title="Kelola Label">
                     🏷️ Label
@@ -153,6 +158,15 @@
                 <option value="Internship">Internship</option>
                 <option value="Contract">Contract</option>
             </select>
+
+            <label for="filterJobType" class="sr-only">Filter Job Type</label>
+            <select id="filterJobType" class="select">
+                <option value="">Semua Job Type</option>
+                <option value="WFO">🏢 WFO</option>
+                <option value="WFA">🌐 WFA</option>
+                <option value="Hybrid">🔀 Hybrid</option>
+                <option value="Remote">🏠 Remote</option>
+            </select>
         </div>
 
         <div class="toolbar__sort">
@@ -252,7 +266,7 @@
                 </div>
 
                 <!-- Row 2 -->
-                <div class="form-grid form-grid--2">
+                <div class="form-grid form-grid--3">
                     <div class="form-group">
                         <label for="employmentType" class="form-label">Employment Type</label>
                         <select id="employmentType" class="form-input">
@@ -261,6 +275,15 @@
                             <option value="Freelance">Freelance</option>
                             <option value="Internship">Internship</option>
                             <option value="Contract">Contract</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobType" class="form-label">Job Type</label>
+                        <select id="jobType" class="form-input">
+                            <option value="WFO">🏢 WFO (Work From Office)</option>
+                            <option value="WFA">🌐 WFA (Work From Anywhere)</option>
+                            <option value="Hybrid">🔀 Hybrid</option>
+                            <option value="Remote">🏠 Remote</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -311,7 +334,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="applyLink" class="form-label">Link Pendaftaran</label>
+                        <label for="applyLink" class="form-label">Apply via / link</label>
                         <input type="url" id="applyLink" class="form-input"
                             placeholder="https://jobs.example.com/..." />
                     </div>
@@ -449,6 +472,291 @@
             </div>
         </div>
     </div>
+
+    <!-- ─────────── MODAL: TUTOR ─────────── -->
+    <div class="modal-overlay hidden" id="tutorOverlay" role="dialog" aria-modal="true" aria-labelledby="tutorTitle">
+        <div class="modal modal--tutor">
+            <div class="modal__header">
+                <h2 class="modal__title" id="tutorTitle">📖 Panduan Job Tracker</h2>
+                <button class="btn-icon modal__close" id="closeTutorBtn" aria-label="Tutup panduan">✕</button>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="tutor-tabs">
+                <button class="tutor-tab active" data-tutor-tab="usage">📗 Cara Pakai</button>
+                <button class="tutor-tab" data-tutor-tab="sheets">☁️ Integrasi Google Sheets</button>
+            </div>
+
+            <!-- ══ TAB 1: CARA PAKAI ══ -->
+            <div class="tutor-body tutor-panel" id="tutorPanelUsage">
+                <p class="tutor-intro">Selamat datang! 👋 Panduan ini membantu kamu menggunakan Job Tracker dari nol — tanpa perlu keahlian teknis.</p>
+
+                <div class="tutor-step">
+                    <div class="tutor-step__num">1</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Apa itu Job Tracker?</h3>
+                        <p class="tutor-desc">Aplikasi pribadi untuk <strong>mencatat semua lamaran pekerjaan</strong> yang sudah kamu kirim. Kamu bisa tahu lamaran mana yang sudah dibalas, mana yang belum, dan mana yang lolos interview — semuanya di satu tempat.</p>
+                        <div class="tutor-tips" style="margin-top:12px">
+                            <div class="tutor-tip tutor-tip--push"><span class="tutor-tip__icon">📋</span><div><strong>Catat lamaran</strong><p>Simpan semua detail: perusahaan, posisi, tanggal, gaji, dll.</p></div></div>
+                            <div class="tutor-tip tutor-tip--pull"><span class="tutor-tip__icon">📊</span><div><strong>Pantau status</strong><p>Lihat berapa lamaran yang interview atau sudah diterima.</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tutor-step">
+                    <div class="tutor-step__num">2</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Menambah Lamaran Baru</h3>
+                        <ol class="tutor-list tutor-list--ordered">
+                            <li>Klik tombol <strong>+ Tambah</strong> di pojok kanan atas.</li>
+                            <li>Isi form yang muncul:
+                                <ul class="tutor-list" style="margin-top:6px">
+                                    <li><strong>Nama Perusahaan</strong> &amp; <strong>Posisi</strong> — wajib diisi</li>
+                                    <li><strong>Employment Type</strong> — Full-time, Part-time, dll.</li>
+                                    <li><strong>Job Type</strong> — WFO, WFA, Hybrid, Remote</li>
+                                    <li><strong>Tanggal Apply</strong> — wajib diisi</li>
+                                    <li><strong>Priority</strong> — seberapa penting bagimu</li>
+                                    <li><strong>Status</strong> — kondisi lamaran saat ini</li>
+                                    <li>Field lainnya opsional (gaji, link, lokasi, catatan)</li>
+                                </ul>
+                            </li>
+                            <li>Klik <strong>Simpan</strong>. Lamaran langsung muncul di halaman utama!</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="tutor-step">
+                    <div class="tutor-step__num">3</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Memahami Status Lamaran</h3>
+                        <p class="tutor-desc" style="margin-bottom:10px">Setiap lamaran punya status yang bisa diubah kapan saja:</p>
+                        <div class="tutor-status-list">
+                            <div class="tutor-status-item"><span class="badge badge--applied">📩 Applied</span><span>Sudah kirim lamaran</span></div>
+                            <div class="tutor-status-item"><span class="badge badge--no-response">😶 No Response</span><span>Belum ada kabar</span></div>
+                            <div class="tutor-status-item"><span class="badge badge--interview">🎤 Interview</span><span>Diundang wawancara</span></div>
+                            <div class="tutor-status-item"><span class="badge badge--ditolak">❌ Ditolak</span><span>Tidak diterima</span></div>
+                            <div class="tutor-status-item"><span class="badge badge--alhamdulillah">🎉 Alhamdulillah</span><span>Diterima! 🎊</span></div>
+                        </div>
+                        <p class="tutor-note" style="margin-top:12px">💡 Ubah status: klik <strong>✏️ Edit</strong> lalu ganti dropdown Status.</p>
+                    </div>
+                </div>
+
+                <div class="tutor-step">
+                    <div class="tutor-step__num">4</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Pilihan Tampilan</h3>
+                        <p class="tutor-desc" style="margin-bottom:10px">Ganti tampilan data dengan tombol di toolbar:</p>
+                        <div class="tutor-view-grid">
+                            <div class="tutor-view-item"><span class="tutor-view-icon">⊞</span><div><strong>Card</strong><p>Kartu lamaran, mudah dibaca</p></div></div>
+                            <div class="tutor-view-item"><span class="tutor-view-icon">☰</span><div><strong>Table</strong><p>Tabel, cocok layar lebar</p></div></div>
+                            <div class="tutor-view-item"><span class="tutor-view-icon">⬚</span><div><strong>Kanban</strong><p>Kolom per status, drag &amp; drop</p></div></div>
+                            <div class="tutor-view-item"><span class="tutor-view-icon">≡</span><div><strong>Timeline</strong><p>Urutan waktu, mirip log</p></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tutor-step">
+                    <div class="tutor-step__num">5</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Filter &amp; Cari Lamaran</h3>
+                        <ul class="tutor-list">
+                            <li><strong>🔍 Kolom Cari</strong> — ketik nama perusahaan atau posisi</li>
+                            <li><strong>Filter Status / Priority / Tipe / Job Type</strong> — saring data sesuai kebutuhan</li>
+                            <li><strong>Urutkan</strong> — terbaru, terlama, priority tinggi/rendah, atau A–Z</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tutor-step">
+                    <div class="tutor-step__num">6</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Fitur Lainnya</h3>
+                        <div class="tutor-tips">
+                            <div class="tutor-tip tutor-tip--push"><span class="tutor-tip__icon">🏷️</span><div><strong>Label / Tag</strong><p>Buat tag warna-warni dan pasang ke lamaran.</p></div></div>
+                            <div class="tutor-tip tutor-tip--pull"><span class="tutor-tip__icon">🔔</span><div><strong>Reminder Interview</strong><p>Notifikasi browser jika ada interview 7 hari ke depan.</p></div></div>
+                            <div class="tutor-tip tutor-tip--push"><span class="tutor-tip__icon">⬇</span><div><strong>Export Excel</strong><p>Ekspor data ke file .xlsx.</p></div></div>
+                            <div class="tutor-tip tutor-tip--pull"><span class="tutor-tip__icon">⬆</span><div><strong>Import Excel</strong><p>Import data dari file Excel.</p></div></div>
+                        </div>
+                        <p class="tutor-note">🌙 Tekan ikon <strong>🌙 / ☀️</strong> di navbar untuk ganti mode gelap/terang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ TAB 2: INTEGRASI GOOGLE SHEETS ══ -->
+            <div class="tutor-body tutor-panel hidden" id="tutorPanelSheets">
+                <p class="tutor-intro">Hubungkan Job Tracker ke Google Sheets agar data tersimpan aman di cloud — gratis!</p>
+
+                <!-- Step 1 -->
+                <div class="tutor-step">
+                    <div class="tutor-step__num">1</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Persiapan Google Sheets</h3>
+                        <ul class="tutor-list">
+                            <li>Buka <a href="https://sheets.new" target="_blank" rel="noopener" class="tutor-link">sheets.new</a> untuk membuat spreadsheet baru.</li>
+                            <li>Beri nama file sesukamu (misal: <strong>Database Job Tracker</strong>).</li>
+                            <li>Kamu tidak perlu mengetik apapun — script akan membuat header otomatis.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="tutor-step">
+                    <div class="tutor-step__num">2</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Pemasangan Google Apps Script</h3>
+                        <ul class="tutor-list">
+                            <li>Di menu Google Sheets, klik <strong>Extensions &gt; Apps Script</strong>.</li>
+                            <li>Hapus semua kode default yang ada di editor.</li>
+                            <li>Copy dan Paste seluruh kode berikut:</li>
+                        </ul>
+                        <div class="tutor-code-wrapper">
+                            <button class="tutor-copy-btn" id="copyScriptBtn" title="Copy kode">📋 Copy</button>
+<pre class="tutor-code"><code>/**
+ * JOB TRACKER — GOOGLE APPS SCRIPT
+ */
+const SHEET_NAME = 'Job Tracker';
+const HEADERS = [
+  'ID', 'Perusahaan', 'Posisi', 'Employment Type', 'Lokasi',
+  'Tanggal Apply', 'Tgl Interview', 'Gaji', 'Priority', 'Status',
+  'Link', 'Requirements', 'Catatan', 'Label IDs', 'Dibuat', 'Diperbarui',
+];
+function getOrCreateSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+    sheet.appendRow(HEADERS);
+    const headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
+    headerRange.setFontWeight('bold').setBackground('#263238').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+    sheet.autoResizeColumns(1, HEADERS.length);
+  }
+  return sheet;
+}
+function rowToJob(row) {
+  return {
+    id: row[0] || '', company: row[1] || '', position: row[2] || '',
+    employmentType: row[3] || '', location: row[4] || '', applyDate: row[5] || '',
+    interviewDate: row[6] || '', salary: row[7] || '', priority: row[8] || 'Medium',
+    status: row[9] || 'Applied', applyLink: row[10] || '', requirements: row[11] || '',
+    notes: row[12] || '', labelIds: row[13] ? JSON.parse(row[13]) : [],
+    createdAt: row[14] || '', updatedAt: row[15] || '',
+  };
+}
+function jobToRow(job) {
+  return [
+    job.id, job.company, job.position, job.employmentType, job.location,
+    job.applyDate, job.interviewDate, job.salary, job.priority, job.status,
+    job.applyLink, job.requirements, job.notes, JSON.stringify(job.labelIds || []),
+    job.createdAt || new Date().toISOString(), job.updatedAt || new Date().toISOString()
+  ];
+}
+function doGet(e) {
+  try {
+    const sheet = getOrCreateSheet();
+    const rows = sheet.getDataRange().getValues();
+    if (rows.length &lt;= 1) return ContentService
+      .createTextOutput(JSON.stringify({ success: true, jobs: [] }))
+      .setMimeType(ContentService.MimeType.JSON);
+    const jobs = rows.slice(1).filter(row =&gt; row[0]).map(rowToJob);
+    return ContentService.createTextOutput(JSON.stringify({ success: true, jobs }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    const action = payload.action || 'push';
+    const jobs = payload.jobs || [];
+    const sheet = getOrCreateSheet();
+    if (action === 'push') {
+      const lastRow = sheet.getLastRow();
+      if (lastRow &gt; 1) {
+        sheet.getRange(2, 1, lastRow - 1, HEADERS.length).clearContent();
+        sheet.deleteRows(2, lastRow - 1);
+      }
+      if (jobs.length &gt; 0)
+        sheet.getRange(2, 1, jobs.length, HEADERS.length).setValues(jobs.map(jobToRow));
+      sheet.autoResizeColumns(1, HEADERS.length);
+      return ContentService.createTextOutput(JSON.stringify({ success: true, written: jobs.length }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="tutor-step">
+                    <div class="tutor-step__num">3</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Deployment <span class="tutor-badge">Penting!</span></h3>
+                        <ol class="tutor-list tutor-list--ordered">
+                            <li>Klik tombol <strong>Deploy</strong> (biru, kanan atas) &gt; <strong>New deployment</strong>.</li>
+                            <li>Pilih icon gerigi (Select type) &gt; <strong>Web app</strong>.</li>
+                            <li>Description: <code>Job Tracker API</code>.</li>
+                            <li>Execute as: <strong>Me</strong> (Email kamu).</li>
+                            <li>Who has access: <strong>Anyone</strong> (wajib agar app bisa kirim data).</li>
+                            <li>Klik <strong>Deploy</strong>.</li>
+                            <li>Saat diminta izin: pilih email &gt; <strong>Advanced</strong> &gt; <strong>Go to (unsafe)</strong> &gt; <strong>Allow</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="tutor-step">
+                    <div class="tutor-step__num">4</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Hubungkan ke Job Tracker</h3>
+                        <ol class="tutor-list tutor-list--ordered">
+                            <li>Setelah deploy berhasil, <strong>salin Web App URL</strong>.</li>
+                            <li>Klik tombol <strong>☁️ Sync Sheets</strong> di navbar.</li>
+                            <li>Paste URL ke input yang tersedia.</li>
+                            <li>Klik <strong>💾 Simpan URL</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="tutor-step">
+                    <div class="tutor-step__num">5</div>
+                    <div class="tutor-step__content">
+                        <h3 class="tutor-step__title">Cara Pakai</h3>
+                        <div class="tutor-tips">
+                            <div class="tutor-tip tutor-tip--push">
+                                <span class="tutor-tip__icon">⬆</span>
+                                <div>
+                                    <strong>Push ke Google Sheets</strong>
+                                    <p>Kirim data dari HP/Laptop ke Sheets (overwrite).</p>
+                                </div>
+                            </div>
+                            <div class="tutor-tip tutor-tip--pull">
+                                <span class="tutor-tip__icon">⬇</span>
+                                <div>
+                                    <strong>Pull dari Google Sheets</strong>
+                                    <p>Ambil data dari Sheets ke HP/Laptop (misal ganti HP).</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="tutor-note">🎉 Sekarang datamu aman tersimpan di Google Sheets secara gratis!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─────────── FOOTER ─────────── -->
+    <footer class="app-footer">
+        <p>Dibuat dengan ❤️ oleh <strong>M. Bagus Prayogi</strong></p>
+        <p class="app-footer__sub">Job Tracker — Lacak Lamaranmu</p>
+    </footer>
 
     <!-- ─────────── TOAST NOTIFICATION ─────────── -->
     <div class="toast-container" id="toastContainer" aria-live="polite"></div>

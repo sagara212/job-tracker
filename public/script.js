@@ -45,6 +45,7 @@ const EXCEL_IMPORT_MAP = {
   'perusahaan': 'company',
   'posisi': 'position',
   'employment type': 'employmentType',
+  'job type': 'jobType',
   'lokasi': 'location',
   'tanggal apply': 'applyDate',
   'gaji': 'salary',
@@ -66,7 +67,7 @@ const state = {
   viewMode: 'card',   // 'card' | 'table' | 'kanban' | 'timeline'
   theme: 'dark',
   notifEnabled: false,
-  filters: { status: '', priority: '', type: '', search: '' },
+  filters: { status: '', priority: '', type: '', jobType: '', search: '' },
   sort: 'date-desc',
   pendingDeleteId: null,
   draggedJobId: null,     // for kanban drag-and-drop
@@ -92,13 +93,14 @@ function generateId() { return Date.now().toString(36) + Math.random().toString(
 ────────────────────────────────────────────────────────── */
 
 function applyFiltersAndSort() {
-  const { status, priority, type, search } = state.filters;
+  const { status, priority, type, jobType, search } = state.filters;
   const q = search.toLowerCase().trim();
 
   let result = state.jobs.filter(job => {
     if (status && job.status !== status) return false;
     if (priority && job.priority !== priority) return false;
     if (type && job.employmentType !== type) return false;
+    if (jobType && job.jobType !== jobType) return false;
     if (q && !job.company.toLowerCase().includes(q) && !job.position.toLowerCase().includes(q)) return false;
     return true;
   });
@@ -157,6 +159,7 @@ function createCardHTML(job) {
   const statusIcon = STATUS_ICON[job.status] || '📩';
   const dateStr = job.applyDate ? formatDate(job.applyDate) : '-';
   const labelBadges = getJobLabelBadges(job);
+  const jobTypeBadge = job.jobType ? `<span class="badge badge--date">🏢 ${escapeHTML(job.jobType)}</span>` : '';
 
   return `
     <article class="job-card" data-id="${job.id}" data-priority="${job.priority}" tabindex="0" aria-label="${job.company} – ${job.position}">
@@ -169,6 +172,7 @@ function createCardHTML(job) {
       </div>
       <div class="job-card__meta">
         <span class="badge badge--type">${job.employmentType}</span>
+        ${jobTypeBadge}
         <span class="badge badge--${job.priority.toLowerCase()}">${job.priority}</span>
         ${job.location ? `<span class="badge badge--date">📍 ${escapeHTML(job.location)}</span>` : ''}
         <span class="badge badge--date">🗓 ${dateStr}</span>
@@ -479,6 +483,7 @@ function openEditModal(id) {
   document.getElementById('company').value = job.company;
   document.getElementById('position').value = job.position;
   document.getElementById('employmentType').value = job.employmentType;
+  document.getElementById('jobType').value = job.jobType || 'WFO';
   document.getElementById('location').value = job.location || '';
   document.getElementById('applyDate').value = job.applyDate || '';
   document.getElementById('interviewDate').value = job.interviewDate || '';
@@ -534,6 +539,7 @@ function readFormValues() {
     company: document.getElementById('company').value.trim(),
     position: document.getElementById('position').value.trim(),
     employmentType: document.getElementById('employmentType').value,
+    jobType: document.getElementById('jobType').value,
     location: document.getElementById('location').value.trim(),
     applyDate: document.getElementById('applyDate').value,
     interviewDate: document.getElementById('interviewDate').value || '',
@@ -594,11 +600,12 @@ function openDetailModal(id) {
     ['Status', `<span class="badge badge--${sc}">${si} ${job.status}</span>`],
     ['Priority', `<span class="badge badge--${job.priority.toLowerCase()}">${job.priority}</span>`],
     ['Tipe', `<span class="badge badge--type">${job.employmentType}</span>`],
+    ['Job Type', job.jobType ? `<span class="badge badge--date">🏢 ${escapeHTML(job.jobType)}</span>` : '–'],
     ['Lokasi', escapeHTML(job.location || '–')],
     ['Tanggal Apply', formatDate(job.applyDate) || '–'],
     ['Tgl Interview', job.interviewDate ? `🎤 ${formatDate(job.interviewDate)}` : '–'],
     ['Gaji', escapeHTML(job.salary || '–')],
-    ['Link', job.applyLink ? `<a class="detail-row__link" href="${escapeHTML(job.applyLink)}" target="_blank" rel="noopener">Buka link ↗</a>` : '–'],
+    ['Apply via', job.applyLink ? `<a class="detail-row__link" href="${escapeHTML(job.applyLink)}" target="_blank" rel="noopener">Buka link ↗</a>` : '–'],
     ['Labels', labelBadges || '–'],
     ['Requirements', job.requirements ? `<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px">${escapeHTML(job.requirements)}</pre>` : '–'],
     ['Catatan', job.notes ? `<pre style="white-space:pre-wrap;font-family:inherit;font-size:13px">${escapeHTML(job.notes)}</pre>` : '–'],
@@ -1282,7 +1289,7 @@ function setupEventListeners() {
   // ── Escape key closes any open modal ──
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-      ['modalOverlay', 'detailOverlay', 'confirmOverlay', 'labelManagerOverlay', 'sheetsOverlay'].forEach(id => {
+      ['modalOverlay', 'detailOverlay', 'confirmOverlay', 'labelManagerOverlay', 'sheetsOverlay', 'tutorOverlay'].forEach(id => {
         if (!document.getElementById(id).classList.contains('hidden')) {
           if (id === 'modalOverlay') closeModal();
           else hideModal(id);
@@ -1327,6 +1334,7 @@ function setupEventListeners() {
   document.getElementById('filterStatus').addEventListener('change', function () { state.filters.status = this.value; render(); });
   document.getElementById('filterPriority').addEventListener('change', function () { state.filters.priority = this.value; render(); });
   document.getElementById('filterType').addEventListener('change', function () { state.filters.type = this.value; render(); });
+  document.getElementById('filterJobType').addEventListener('change', function () { state.filters.jobType = this.value; render(); });
   document.getElementById('sortBy').addEventListener('change', function () { state.sort = this.value; render(); });
   document.getElementById('globalSearch').addEventListener('input', function () { state.filters.search = this.value; render(); });
 
@@ -1376,6 +1384,39 @@ function setupEventListeners() {
   });
   document.getElementById('sheetsPushBtn').addEventListener('click', syncToSheets);
   document.getElementById('sheetsPullBtn').addEventListener('click', syncFromSheets);
+
+  // ── Tutor Modal ──
+  document.getElementById('openTutorBtn').addEventListener('click', () => showModal('tutorOverlay'));
+  document.getElementById('closeTutorBtn').addEventListener('click', () => hideModal('tutorOverlay'));
+  document.getElementById('tutorOverlay').addEventListener('click', function (e) {
+    if (e.target === this) hideModal('tutorOverlay');
+  });
+
+  // ── Tutor Tab Switching ──
+  document.querySelectorAll('.tutor-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Update tab active state
+      document.querySelectorAll('.tutor-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      // Show/hide panels
+      const target = tab.dataset.tutorTab; // 'usage' or 'sheets'
+      document.getElementById('tutorPanelUsage').classList.toggle('hidden', target !== 'usage');
+      document.getElementById('tutorPanelSheets').classList.toggle('hidden', target !== 'sheets');
+    });
+  });
+
+  // ── Copy Apps Script button ──
+  document.getElementById('copyScriptBtn').addEventListener('click', function () {
+    const code = document.querySelector('#tutorOverlay .tutor-code code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      this.textContent = '✅ Copied!';
+      this.classList.add('copied');
+      setTimeout(() => {
+        this.textContent = '📋 Copy';
+        this.classList.remove('copied');
+      }, 2000);
+    }).catch(() => showToast('Gagal copy, coba manual.', 'error'));
+  });
 }
 
 /* ──────────────────────────────────────────────────────────

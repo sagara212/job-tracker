@@ -1,0 +1,106 @@
+Panduan Integrasi Google Sheets - Job Tracker ☁️
+Dokumen ini berisi langkah-langkah untuk menghubungkan aplikasi Job Tracker kamu ke Google Sheets agar data tersimpan dengan aman di cloud (gratis).
+
+1. Persiapan Google Sheets
+Buka sheets.new untuk membuat spreadsheet baru.
+Beri nama file sesukamu (misal: Database Job Tracker).
+Kamu tidak perlu mengetik apa pun di dalam sheet, script akan membuat headernya secara otomatis.
+2. Pemasangan Google Apps Script
+Di menu Google Sheets, klik Extensions > Apps Script.
+Hapus semua kode default yang ada di editor.
+Copy dan Paste seluruh kode dari file 
+google-apps-script.js
+ (lihat blok kode di bawah).
+Kode untuk di-copy:
+javascript
+/**
+ * JOB TRACKER — GOOGLE APPS SCRIPT
+ */
+const SHEET_NAME = 'Job Tracker';
+const HEADERS = [
+  'ID', 'Perusahaan', 'Posisi', 'Employment Type', 'Lokasi',
+  'Tanggal Apply', 'Tgl Interview', 'Gaji', 'Priority', 'Status',
+  'Link', 'Requirements', 'Catatan', 'Label IDs', 'Dibuat', 'Diperbarui',
+];
+function getOrCreateSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+    sheet.appendRow(HEADERS);
+    const headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
+    headerRange.setFontWeight('bold').setBackground('#263238').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+    sheet.autoResizeColumns(1, HEADERS.length);
+  }
+  return sheet;
+}
+function rowToJob(row) {
+  return {
+    id: row[0] || '', company: row[1] || '', position: row[2] || '',
+    employmentType: row[3] || '', location: row[4] || '', applyDate: row[5] || '',
+    interviewDate: row[6] || '', salary: row[7] || '', priority: row[8] || 'Medium',
+    status: row[9] || 'Applied', applyLink: row[10] || '', requirements: row[11] || '',
+    notes: row[12] || '', labelIds: row[13] ? JSON.parse(row[13]) : [],
+    createdAt: row[14] || '', updatedAt: row[15] || '',
+  };
+}
+function jobToRow(job) {
+  return [
+    job.id, job.company, job.position, job.employmentType, job.location,
+    job.applyDate, job.interviewDate, job.salary, job.priority, job.status,
+    job.applyLink, job.requirements, job.notes, JSON.stringify(job.labelIds || []),
+    job.createdAt || new Date().toISOString(), job.updatedAt || new Date().toISOString()
+  ];
+}
+function doGet(e) {
+  try {
+    const sheet = getOrCreateSheet();
+    const rows = sheet.getDataRange().getValues();
+    if (rows.length <= 1) return ContentService.createTextOutput(JSON.stringify({ success: true, jobs: [] })).setMimeType(ContentService.MimeType.JSON);
+    const jobs = rows.slice(1).filter(row => row[0]).map(rowToJob);
+    return ContentService.createTextOutput(JSON.stringify({ success: true, jobs })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    const action = payload.action || 'push';
+    const jobs = payload.jobs || [];
+    const sheet = getOrCreateSheet();
+    if (action === 'push') {
+      const lastRow = sheet.getLastRow();
+      if (lastRow > 1) {
+        sheet.getRange(2, 1, lastRow - 1, HEADERS.length).clearContent();
+        sheet.deleteRows(2, lastRow - 1);
+      }
+      if (jobs.length > 0) sheet.getRange(2, 1, jobs.length, HEADERS.length).setValues(jobs.map(jobToRow));
+      sheet.autoResizeColumns(1, HEADERS.length);
+      return ContentService.createTextOutput(JSON.stringify({ success: true, written: jobs.length })).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+3. Deployment (Penting!)
+Agar aplikasi bisa "berbicara" dengan script ini, kamu harus mempublikasikannya:
+
+Klik tombol Deploy (biru, kanan atas) > New deployment.
+Pilih icon gerigi (Select type) > Web app.
+Description: Job Tracker API.
+Execute as: Me (Email kamu).
+Who has access: Anyone (Ini wajib agar aplikasi bisa mengirim data tanpa login Google yang rumit).
+Klik Deploy.
+Google akan meminta izin (Authorize Access) -> Pilih Email kamu -> Klik Advanced -> Klik Go to (unsafe) -> Klik Allow.
+4. Hubungkan ke Job Tracker
+Setelah berhasil, kamu akan mendapatkan Web App URL. Salin (Copy) URL tersebut.
+Buka aplikasi Job Tracker kamu.
+Klik tombol ☁️ Sync Sheets di bagian atas.
+Masukkan URL tadi ke kolom input yang tersedia.
+Klik 💾 Simpan URL.
+5. Cara Pakai
+Push ke Google Sheets: Kirim data dari HP/Laptop kamu ke Sheets.
+Pull dari Google Sheets: Ambil data dari Sheets ke HP/Laptop kamu (misal kalau ganti HP).
+Sekarang datamu aman tersimpan di Google Sheets secara gratis!
